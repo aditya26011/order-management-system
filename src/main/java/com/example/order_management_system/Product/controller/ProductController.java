@@ -28,4 +28,10 @@ public class ProductController {
         List<ProductDTO> allProducts=productService.getAllProducts();
         return new ResponseEntity<>(allProducts,HttpStatus.FOUND);
     }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<ProductDTO> patchProduct(@PathVariable("id") Long id, @RequestBody ProductDTO productDTO){
+        ProductDTO patchedProduct=productService.patchProduct(id,productDTO);
+        return new ResponseEntity<>(patchedProduct,HttpStatus.CREATED);
+    }
 }

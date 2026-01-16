@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,5 +37,25 @@ public class ProductService {
                .stream()
                .map((element) -> modelMapper.map(element, ProductDTO.class))
                        .collect(Collectors.toList());
+    }
+
+    public ProductDTO patchProduct(Long id,ProductDTO productDTO) {
+      Product product=  productRepository.findById(id).orElseThrow(()->new NoSuchElementException("Product with id not found:"+ id));
+
+    if(productDTO.getProductName()!=null){
+        product.setProductName(productDTO.getProductName());
+    }
+    if(productDTO.getStock()!=null){
+        product.setStock(productDTO.getStock());
+    }
+    if(productDTO.getPrice()!=null){
+        product.setPrice(productDTO.getPrice());
+    }
+    if(productDTO.getActive()!=null){
+        product.setActive(productDTO.getActive());
+    }
+    Product saved=productRepository.save(product);
+    ProductDTO response =modelMapper.map(saved,ProductDTO.class);
+    return  response;
     }
 }
