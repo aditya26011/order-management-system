@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/products")
@@ -19,5 +21,11 @@ public class ProductController {
         System.out.println("Product dto,"+ productDTO);
         ProductDTO addedProduct=productService.addProduct(productDTO);
         return new ResponseEntity<>(addedProduct, HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ProductDTO>> getAllProducts(){
+        List<ProductDTO> allProducts=productService.getAllProducts();
+        return new ResponseEntity<>(allProducts,HttpStatus.FOUND);
     }
 }

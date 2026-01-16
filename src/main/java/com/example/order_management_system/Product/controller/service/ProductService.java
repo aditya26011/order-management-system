@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ProductService {
@@ -27,4 +30,11 @@ public class ProductService {
     }
 
 
+    public List<ProductDTO> getAllProducts() {
+        List<Product> productList=productRepository.findAll();
+       return productList
+               .stream()
+               .map((element) -> modelMapper.map(element, ProductDTO.class))
+                       .collect(Collectors.toList());
+    }
 }
