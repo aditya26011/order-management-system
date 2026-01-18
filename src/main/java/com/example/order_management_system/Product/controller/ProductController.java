@@ -40,4 +40,14 @@ public class ProductController {
         ProductDTO patchedProduct=productService.patchProduct(id,productDTO);
         return new ResponseEntity<>(patchedProduct,HttpStatus.CREATED);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Boolean> deleteById(@PathVariable("id") Long id){
+       if (productService.deleteById(id)) {
+           return new ResponseEntity<>(true, HttpStatus.OK);
+       }
+       else{
+            return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+        }
+    }
 }

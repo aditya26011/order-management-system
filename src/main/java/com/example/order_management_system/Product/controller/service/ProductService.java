@@ -63,4 +63,14 @@ public class ProductService {
      Product product =productRepository.findById(id).orElseThrow(()-> new NoSuchElementException("Product with Id not found:"+ id));
         return modelMapper.map(product, ProductDTO.class);
     }
+
+    public boolean deleteById(Long id) {
+        boolean exists=productRepository.existsById(id);
+        if(exists){
+            productRepository.deleteById(id);
+            return true;
+        }
+      else throw  new NoSuchElementException("No element with id found");
+
+    }
 }
