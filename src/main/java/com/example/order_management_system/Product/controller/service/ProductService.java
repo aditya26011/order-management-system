@@ -58,4 +58,9 @@ public class ProductService {
     ProductDTO response =modelMapper.map(saved,ProductDTO.class);
     return  response;
     }
+
+    public ProductDTO getProductByid(Long id) {
+     Product product =productRepository.findById(id).orElseThrow(()-> new NoSuchElementException("Product with Id not found:"+ id));
+        return modelMapper.map(product, ProductDTO.class);
+    }
 }

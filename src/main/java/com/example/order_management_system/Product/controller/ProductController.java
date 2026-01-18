@@ -29,6 +29,12 @@ public class ProductController {
         return new ResponseEntity<>(allProducts,HttpStatus.FOUND);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable("id") Long id){
+       ProductDTO productDTO= productService.getProductByid(id);
+       return new ResponseEntity<>(productDTO,HttpStatus.FOUND);
+    }
+
     @PatchMapping("/{id}")
     public ResponseEntity<ProductDTO> patchProduct(@PathVariable("id") Long id, @RequestBody ProductDTO productDTO){
         ProductDTO patchedProduct=productService.patchProduct(id,productDTO);
