@@ -17,4 +17,8 @@ public class InventoryService {
     public void reduceStock(Product product, int quantity) {
         product.setStock(product.getStock() - quantity);
     }
+
+    public void restoreStock(Product product, Integer quantity) {
+        product.setStock(product.getStock()+quantity);
+    }
 }

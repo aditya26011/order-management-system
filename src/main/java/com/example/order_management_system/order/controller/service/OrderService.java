@@ -1,5 +1,6 @@
 package com.example.order_management_system.order.controller.service;
 
+import com.example.order_management_system.Exceptions.InvalidOrderStateException;
 import com.example.order_management_system.Product.controller.entity.Product;
 import com.example.order_management_system.Product.controller.repository.ProductRepository;
 import com.example.order_management_system.inventory.InventoryService;
@@ -190,5 +191,55 @@ public class OrderService {
         orderResponseDTO.setItems(orderItemDTOS);
 
         return orderResponseDTO;
+    }
+
+
+    @Transactional
+    public OrderResponseDTO cancelOrderById(Long id) {
+
+        //1.check if order exist or not
+      Order order = orderRepository.findById(id)
+                .orElseThrow(()-> new NoSuchElementException("Order with Id not found:" +id));
+
+        //2.To do : verify ownership after JWT
+
+        //3. check order status
+        if(order.getStatus()!=Status.PLACED && order.getStatus()!=Status.CONFIRMED){
+            throw new InvalidOrderStateException("Order cannot be cancelled when status is " + order.getStatus());
+        }
+
+        //4. restore stock
+        for(OrderItems item: order.getOrderItems()){
+            Product product=item.getProduct();
+            inventoryService.restoreStock(product,item.getQuantity());
+        }
+        //5.update status
+        order.setStatus(Status.CANCELLED);
+
+        // 6. Save order
+        Order savedOrder = orderRepository.save(order);
+
+        //7. ResponseDto
+        OrderResponseDTO orderResponseDTO=new OrderResponseDTO();
+        orderResponseDTO.setOrderId(savedOrder.getId());
+        orderResponseDTO.setStatus(String.valueOf(savedOrder.getStatus()));
+        orderResponseDTO.setTotalAmount(savedOrder.getTotalAmount());
+        orderResponseDTO.setCreatedAt(savedOrder.getCreatedAt());
+
+     List<OrderItemDTO> orderItemDTOList= savedOrder
+                                        .getOrderItems()
+                                        .stream().map(orderItems -> {
+
+                                            OrderItemDTO orderItemDTO=new OrderItemDTO();
+                                            orderItemDTO.setProductId(orderItems.getProduct().getId());
+                                            orderItemDTO.setQuantity(orderItems.getQuantity());
+                                            orderItemDTO.setPrice(orderItems.getProduct().getPrice());
+                                            orderItemDTO.setProductName(orderItems.getProduct().getProductName());
+                                            return orderItemDTO;
+                                        }).toList();
+
+    orderResponseDTO.setItems(orderItemDTOList);
+    return orderResponseDTO;
+
     }
 }
