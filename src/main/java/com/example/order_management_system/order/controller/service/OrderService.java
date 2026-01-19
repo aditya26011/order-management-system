@@ -12,7 +12,6 @@ import com.example.order_management_system.order.controller.entity.Status;
 import com.example.order_management_system.order.controller.repository.OrderRepository;
 import com.example.order_management_system.user.controller.entity.User;
 import com.example.order_management_system.user.controller.repository.UserRepository;
-import com.example.order_management_system.user.controller.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -24,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-
-import static com.example.order_management_system.user.controller.entity.Role.USER;
 
 @Service
 @RequiredArgsConstructor
@@ -137,6 +134,37 @@ public class OrderService {
         responseDTO.setItems(itemDTOs);
 
         return responseDTO;
+
+    }
+
+    public List<OrderResponseDTO> getMyOrders() {
+
+
+        List<Order> orders = orderRepository.findAllByUserId(1L);
+
+
+        return orders.stream().map(order -> {
+            OrderResponseDTO orderResponseDTO = new OrderResponseDTO();
+            orderResponseDTO.setOrderId(order.getId());
+            orderResponseDTO.setTotalAmount(order.getTotalAmount());
+            orderResponseDTO.setStatus(String.valueOf(order.getStatus()));
+
+            //Map order itmes
+            List<OrderItemDTO> itemDTOs = order.getOrderItems()
+                    .stream()
+                    .map(orderItem -> {
+                        OrderItemDTO dto = new OrderItemDTO();
+                        dto.setProductId(orderItem.getProduct().getId());
+                        dto.setProductName(orderItem.getProduct().getProductName());
+                        dto.setQuantity(orderItem.getQuantity());
+                        dto.setPrice(orderItem.getPriceAtPurchase());
+                        return dto;
+                    })
+                    .toList();
+
+            orderResponseDTO.setItems(itemDTOs);
+            return orderResponseDTO;
+        }).toList();
 
     }
 }

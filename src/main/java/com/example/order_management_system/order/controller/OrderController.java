@@ -4,13 +4,11 @@ import com.example.order_management_system.order.controller.dto.OrderRequestDTO;
 import com.example.order_management_system.order.controller.dto.OrderResponseDTO;
 import com.example.order_management_system.order.controller.service.OrderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/orders")
@@ -25,5 +23,10 @@ public class OrderController {
     public ResponseEntity<OrderResponseDTO> placeOrder(@RequestBody OrderRequestDTO orderRequestDTO){
         OrderResponseDTO orderedProduct=orderService.placeOrder(orderRequestDTO);
         return new ResponseEntity<>(orderedProduct, HttpStatus.CREATED);
+    }
+    @GetMapping("/my")
+    public ResponseEntity<List<OrderResponseDTO>> getMyOrders(){
+        List<OrderResponseDTO> orders=orderService.getMyOrders();
+        return new ResponseEntity<>(orders,HttpStatus.FOUND);
     }
 }
