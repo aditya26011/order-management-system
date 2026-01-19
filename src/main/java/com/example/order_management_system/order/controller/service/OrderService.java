@@ -167,4 +167,28 @@ public class OrderService {
         }).toList();
 
     }
+
+    public OrderResponseDTO getOrderById(Long id) {
+     Order order =orderRepository.findById(id).orElseThrow(()->new NoSuchElementException("Order with given id not found:"+id));
+        OrderResponseDTO orderResponseDTO=new OrderResponseDTO();
+        orderResponseDTO.setOrderId(order.getId());
+        orderResponseDTO.setTotalAmount(order.getTotalAmount());
+        orderResponseDTO.setStatus(String.valueOf(order.getStatus()));
+        orderResponseDTO.setCreatedAt(order.getCreatedAt());
+
+        List<OrderItemDTO> orderItemDTOS=order.getOrderItems().
+                stream().
+                map(orderItems -> {
+                    OrderItemDTO dto=new OrderItemDTO();
+                    dto.setProductId(orderItems.getProduct().getId());
+                    dto.setProductName(orderItems.getProduct().getProductName());
+                    dto.setPrice(orderItems.getProduct().getPrice());
+                    dto.setQuantity(orderItems.getProduct().getStock());
+                    return dto;
+                }).toList();
+
+        orderResponseDTO.setItems(orderItemDTOS);
+
+        return orderResponseDTO;
+    }
 }

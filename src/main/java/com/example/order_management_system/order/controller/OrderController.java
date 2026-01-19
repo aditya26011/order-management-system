@@ -29,4 +29,10 @@ public class OrderController {
         List<OrderResponseDTO> orders=orderService.getMyOrders();
         return new ResponseEntity<>(orders,HttpStatus.FOUND);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<OrderResponseDTO> getOrderById(@PathVariable("id") Long Id){
+        OrderResponseDTO orderById=orderService.getOrderById(Id);
+        return new ResponseEntity<>(orderById,HttpStatus.OK);
+    }
 }
