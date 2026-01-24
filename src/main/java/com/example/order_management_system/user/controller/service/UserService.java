@@ -33,6 +33,12 @@ public class UserService implements UserDetailsService {
         return userRepository.findByEmail(username)
                 .orElseThrow(()->  new UsernameNotFoundException("User with email not found:"+username));
     }
+
+    public User getUserById(Long userId){
+        return userRepository.findById(userId)
+                .orElseThrow(()->  new UsernameNotFoundException("User with id not found:"+userId));
+    }
+
     public UserDto signUp(SignUpDto signUpDto) {
         Optional<User> user = userRepository.findByEmail(signUpDto.getEmail());
         if(user.isPresent()){
